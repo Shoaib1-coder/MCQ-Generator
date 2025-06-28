@@ -1,0 +1,44 @@
+## MCQ 1
+Question: What is the name of the web application described in the document?
+A) Car Rental System
+B) ITS Rent A Car
+C) Vehicle Booking Platform
+D) Okara University Project
+
+Correct Answer: B
+
+## MCQ 2
+Question: Which database is used for the ITS Rent A Car application?
+A) MySQL
+B) PostgreSQL
+C) MongoDB
+D) Oracle
+
+Correct Answer: C
+
+## MCQ 3
+Question: What frontend technology is used for building the user interface?
+A) Angular
+B) Vue.js
+C) React
+D) Svelte
+
+Correct Answer: C
+
+## MCQ 4
+Question:  What is the primary payment gateway integrated into the application?
+A) PayPal
+B) Square
+C) Stripe
+D) Braintree
+
+Correct Answer: C
+
+## MCQ 5
+Question:  What is the target uptime for the ITS Rent A Car application per year?
+A) 99%
+B) 99.5%
+C) 99.9%
+D) 100%
+
+Correct Answer: C
