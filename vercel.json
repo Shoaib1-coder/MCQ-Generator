@@ -1,18 +1,6 @@
 {
-<<<<<<< HEAD
   "version": 2,
   "builds": [{ "src": "api/index.py", "use": "@vercel/python" }],
   "routes": [{ "src": "/(.*)", "dest": "api/index.py" }]
 }
-=======
-  "builds": [
-    { "src": "app.py", "use": "@vercel/python" }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "app.py" }
-  ]
-}
 
-
-  
->>>>>>> 7b8312b0d9a3a301184a2724f01024676da9ea23
