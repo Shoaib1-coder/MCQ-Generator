@@ -2,20 +2,21 @@ import os
 from flask import Flask, render_template, request, send_file
 import pdfplumber
 import docx
-
 from werkzeug.utils import secure_filename
 import google.generativeai as genai
-from fpdf import FPDF  # pip install fpdf
+from fpdf import FPDF
 
-# Set your API key
-os.environ["GOOGLE_API_KEY"] = ""
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
 model = genai.GenerativeModel("models/gemini-1.5-pro")
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads/'
-app.config['RESULTS_FOLDER'] = 'results/'
+app.config['UPLOAD_FOLDER'] = '/tmp/uploads/'
+app.config['RESULTS_FOLDER'] = '/tmp/results/'
 app.config['ALLOWED_EXTENSIONS'] = {'pdf', 'txt', 'docx'}
+
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs(app.config['RESULTS_FOLDER'], exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
@@ -24,12 +25,10 @@ def extract_text_from_file(file_path):
     ext = file_path.rsplit('.', 1)[1].lower()
     if ext == 'pdf':
         with pdfplumber.open(file_path) as pdf:
-            text = ''.join([page.extract_text() for page in pdf.pages])
-        return text
+            return ''.join([page.extract_text() for page in pdf.pages if page.extract_text()])
     elif ext == 'docx':
         doc = docx.Document(file_path)
-        text = ' '.join([para.text for para in doc.paragraphs])
-        return text
+        return ' '.join([para.text for para in doc.paragraphs])
     elif ext == 'txt':
         with open(file_path, 'r') as file:
             return file.read()
@@ -37,12 +36,8 @@ def extract_text_from_file(file_path):
 
 def Question_mcqs_generator(input_text, num_questions):
     prompt = f"""
-    You are an AI assistant helping the user generate multiple-choice questions (MCQs) based on the following text:
+    Generate {num_questions} MCQs from this text:
     '{input_text}'
-    Please generate {num_questions} MCQs from the text. Each question should have:
-    - A clear question
-    - Four answer options (labeled A, B, C, D)
-    - The correct answer clearly indicated
     Format:
     ## MCQ
     Question: [question]
@@ -52,8 +47,7 @@ def Question_mcqs_generator(input_text, num_questions):
     D) [option D]
     Correct Answer: [correct option]
     """
-    response = model.generate_content(prompt).text.strip()
-    return response
+    return model.generate_content(prompt).text.strip()
 
 def save_mcqs_to_file(mcqs, filename):
     results_path = os.path.join(app.config['RESULTS_FOLDER'], filename)
@@ -65,12 +59,10 @@ def create_pdf(mcqs, filename):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-
     for mcq in mcqs.split("## MCQ"):
         if mcq.strip():
             pdf.multi_cell(0, 10, mcq.strip())
-            pdf.ln(5)  # Add a line break
-
+            pdf.ln(5)
     pdf_path = os.path.join(app.config['RESULTS_FOLDER'], filename)
     pdf.output(pdf_path)
     return pdf_path
@@ -83,29 +75,28 @@ def index():
 def generate_mcqs():
     if 'file' not in request.files:
         return "No file part"
-
     file = request.files['file']
-
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
 
-        # Extract text from the uploaded file
         text = extract_text_from_file(file_path)
+        if not text:
+            return "Text extraction failed."
 
-        if text:
+        try:
             num_questions = int(request.form['num_questions'])
             mcqs = Question_mcqs_generator(text, num_questions)
+        except Exception as e:
+            return f"Error generating MCQs: {str(e)}"
 
-            # Save the generated MCQs to a file
-            txt_filename = f"generated_mcqs_{filename.rsplit('.', 1)[0]}.txt"
-            pdf_filename = f"generated_mcqs_{filename.rsplit('.', 1)[0]}.pdf"
-            save_mcqs_to_file(mcqs, txt_filename)
-            create_pdf(mcqs, pdf_filename)
+        txt_filename = f"generated_mcqs_{filename.rsplit('.', 1)[0]}.txt"
+        pdf_filename = f"generated_mcqs_{filename.rsplit('.', 1)[0]}.pdf"
+        save_mcqs_to_file(mcqs, txt_filename)
+        create_pdf(mcqs, pdf_filename)
 
-            # Display and allow downloading
-            return render_template('results.html', mcqs=mcqs, txt_filename=txt_filename, pdf_filename=pdf_filename)
+        return render_template('results.html', mcqs=mcqs, txt_filename=txt_filename, pdf_filename=pdf_filename)
     return "Invalid file format"
 
 @app.route('/download/<filename>')
@@ -113,9 +104,6 @@ def download_file(filename):
     file_path = os.path.join(app.config['RESULTS_FOLDER'], filename)
     return send_file(file_path, as_attachment=True)
 
-if __name__ == "__main__":
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
-    if not os.path.exists(app.config['RESULTS_FOLDER']):
-        os.makedirs(app.config['RESULTS_FOLDER'])
-    app.run(debug=True)
+# ✅ Key part: expose the app for Vercel
+# This must return the Flask app itself, not a function call
+handler = app
