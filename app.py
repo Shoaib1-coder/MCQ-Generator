@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, send_file
 import pdfplumber
 import docx
-import csv
+
 from werkzeug.utils import secure_filename
 import google.generativeai as genai
 from fpdf import FPDF  # pip install fpdf
