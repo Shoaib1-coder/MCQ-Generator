@@ -6,10 +6,9 @@ from werkzeug.utils import secure_filename
 import google.generativeai as genai
 from fpdf import FPDF
 
-from dotenv import load_dotenv
-load_dotenv()
+# Configure Gemini API Key directly from environment (set in Vercel dashboard)
+genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 model = genai.GenerativeModel("models/gemini-1.5-pro")
 
 app = Flask(__name__)
@@ -108,4 +107,3 @@ def download_file(filename):
 
 def handler(environ, start_response):
     return app(environ, start_response)
-
