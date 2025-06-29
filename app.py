@@ -6,8 +6,7 @@ from werkzeug.utils import secure_filename
 import google.generativeai as genai
 from fpdf import FPDF
 
-# Configure Gemini API Key directly from environment (set in Vercel dashboard)
-genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 model = genai.GenerativeModel("models/gemini-1.5-pro")
 
@@ -105,5 +104,6 @@ def download_file(filename):
     file_path = os.path.join(app.config['RESULTS_FOLDER'], filename)
     return send_file(file_path, as_attachment=True)
 
-def handler(environ, start_response):
-    return app(environ, start_response)
+# ✅ Key part: expose the app for Vercel
+# This must return the Flask app itself, not a function call
+handler = app
