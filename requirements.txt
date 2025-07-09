@@ -1,5 +1,5 @@
-Flask
-pdfplumber
-python-docx
-fpdf
-google-generativeai
+Flask==3.1.1
+pdfplumber==0.11.7
+python-docx==1.2.0
+fpdf==1.7.2
+google-generativeai==0.8.5
