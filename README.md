@@ -48,7 +48,7 @@ mcq_generator_app/
 
 ```bash
 git clone https://github.com/Shoaib1-coder/MCQ-Generator.git
-cd mcq-generator-app
+cd MCQ-Generator and cd api
 ```
 
 ### 2. Create a virtual environment (optional but recommended)
@@ -86,6 +86,7 @@ Or set it in your terminal or `.env` file.
 ## ▶️ Run the App
 
 ```bash
+
 python index.py
 ```
 
