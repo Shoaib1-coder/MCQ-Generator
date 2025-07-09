@@ -1,7 +1,7 @@
 Flask==3.1.1
-pdfplumber==0.11.7          # Latest stable release :contentReference[oaicite:1]{index=1}
+pdfplumber==0.11.7          
 python-docx==1.2.0
 fpdf==1.7.2
-google-generativeai==0.8.5  # Last supported version before migration :contentReference[oaicite:2]{index=2}
-google-genai               # New SDK (no fixed version; always use latest)
+google-generativeai==0.8.5 
+google-genai               
 
