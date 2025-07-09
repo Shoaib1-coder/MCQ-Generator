@@ -47,7 +47,7 @@ mcq_generator_app/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Shoaib1-coder/mcq-generator-app.git
+git clone https://github.com/Shoaib1-coder/MCQ-Generator.git
 cd mcq-generator-app
 ```
 
