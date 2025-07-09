@@ -47,15 +47,22 @@ mcq_generator_app/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/mcq-generator-app.git
+git clone https://github.com/Shoaib1-coder/mcq-generator-app.git
 cd mcq-generator-app
 ```
 
 ### 2. Create a virtual environment (optional but recommended)
+   # Make sure Anaconda is installed: https://www.anaconda.com/products/distribution
+   # Anaconda Prompt open
+   # Create a new environment named 'mcqs' with Python 3.10
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+conda create --name mcqs python=3.10
+
+# Activate the environment
+conda activate mcqs
+
 ```
 
 ### 3. Install the dependencies
