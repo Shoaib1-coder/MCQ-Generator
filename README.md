@@ -52,12 +52,12 @@ cd mcq-generator-app
 ```
 
 ### 2. Create a virtual environment (optional but recommended)
-   # Make sure Anaconda is installed: https://www.anaconda.com/products/distribution
-   # Anaconda Prompt open
-   # Create a new environment named 'mcqs' with Python 3.10
+   
 
 ```bash
-
+# Make sure Anaconda is installed: https://www.anaconda.com/products/distribution
+# Anaconda Prompt open
+# Create a new environment named 'mcqs' with Python 3.10
 conda create --name mcqs python=3.10
 
 # Activate the environment
